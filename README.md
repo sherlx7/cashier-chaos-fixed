@@ -7,7 +7,7 @@
 **What Was Broken**
 Critical Game-Breaking Bugs:
 1. Uninitialized Game State
-Issue: customer and remainingLives variables were undefined
+Issue: customer and remainingLives variables were undefined /n
 Impact: Game crashed immediately on start with TypeError: Cannot read properties of undefined
 Fix: define and initialise the values
 
