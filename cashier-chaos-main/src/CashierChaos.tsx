@@ -46,7 +46,7 @@ export function CashierChaos() {
 
     setTimeout(() => {
       if (result === "success") {
-        if (customer === 4) return gs.endSession("success");
+        if (customer >= 4) return gs.endSession("success");
 
         gs.updateState({ customer: customer + 1, cash: emptyCash() });
       } else if (result === "error") {
@@ -64,6 +64,8 @@ export function CashierChaos() {
   const customerSrc = useMemo(() => gs.assets[`person${getRandomNum(8, 1)}_${getRandomNum(4, 1)}`], [customer]);
   const { hundreds, cents } = useMemo(() => getAmount(multiple), [customer]);
   const borrow = cents > 0 ? 1 : 0;
+    console.log('hundreds:', hundreds, 'cents:', cents, 'borrow:', borrow);
+
 
   return (
     <div className="relative flex flex-col w-full h-full overflow-y-auto">
@@ -87,12 +89,12 @@ export function CashierChaos() {
         <div className="absolute bottom-0 left-0 w-1/2">
           <img src={gs.assets.cashRegister} className="-mb-1" />
 
-          <div className="absolute top-[12%] left-[12%] text-lg text-white font-medium">
+          <div className="absolute top-[12%] left-[12%] text-lg text-white font-large">
             <p>Received: </p>
             <p>Total: </p>
             <p className={cashRegisterWorking ? "text-yellow-500" : "text-red-400"}>Change: </p>
           </div>
-          <div className="absolute top-[12%] right-[12%] text-right text-lg text-white font-medium">
+          <div className="absolute top-[12%] right-[72%] text-right text-lg text-white font-large">
             <p>$100.00</p>
             <p>
               ${100 - hundreds - borrow}.{borrow * 100 - cents}
@@ -111,14 +113,14 @@ export function CashierChaos() {
               <button
                 key={x}
                 className="relative w-10 md:w-24 lg:w-28"
-                onClick={() => gs.updateState({ cash: { ...cash, [x]: cash[x] - 1 } })}
-                style={{ display: cash[x] ? undefined : "none" }}
+                onClick={() => gs.updateState({ cash: { ...cash, [x]: (cash[x] || 0) - 1 } })}
+                style={{ display: cash && cash[x] ? undefined : "none" }}
               >
                 <img
                   className="absolute"
                   src={gs.assets["dollar_" + x]}
-                  style={{ display: cash[x] - 1 ? undefined : "none" }}
-                />
+                  style={{ display: cash && cash[x] ? undefined : "none" }}
+                  />
                 <Highlight num={cash[x]} />
                 <motion.img key={`${x}-${cash[x]}`} layoutId={`${x}-${cash[x]}`} src={gs.assets["dollar_" + x]} />
               </button>
@@ -130,14 +132,14 @@ export function CashierChaos() {
                   key={x}
                   className="relative"
                   onClick={() => gs.updateState({ cash: { ...cash, [x]: cash[x] - 1 } })}
-                  style={{ display: cash[x] ? undefined : "none" }}
+                  style={{ display: cash && cash[x] ? undefined : "none" }}
                 >
                   <img
                     className="absolute"
                     src={gs.assets["cent_" + x * 100]}
                     style={{
                       height: (x * 100) / 20 + 25,
-                      display: cash[x] - 1 ? undefined : "none",
+                      display: cash && cash[x] - 1 ? undefined : "none",
                     }}
                   />
                   <Highlight num={cash[x]} />
@@ -187,9 +189,19 @@ export function CashierChaos() {
         <button
           className="block pt-1 pb-2 mx-auto text-xl font-bold text-white bg-green-600 shadow-xl rounded-xl w-80 md:scale-125 lg:scale-150"
           onClick={() => {
-            const a_hundreds = [20, 10, 5, 2, 1].map((x) => cash[x] * x).reduce((a, b) => a + b);
-            const a_cents = [0.5, 0.2, 0.1].map((x) => Math.round(cash[x] * x * 100)).reduce((a, b) => a + b);
+            const a_hundreds = [20, 10, 5, 2, 1].map((x) => (cash[x] || 0) * x).reduce((a, b) => a + b, 0);
+            const a_cents = [1, 0.5, 0.2, 0.1].map((x) => Math.round((cash[x] || 0) * x * 100)).reduce((a, b) => a + b, 0);
+            
+            const totalGiven = a_hundreds + a_cents / 100;
+            const expectedChange = hundreds + cents / 100;
+            
+            if (Math.abs(totalGiven - expectedChange) < 0.01) {
+              setResult("success");
+            } else {
+              setResult("error");
+            }
           }}
+          
         >
           SUBMIT
         </button>
