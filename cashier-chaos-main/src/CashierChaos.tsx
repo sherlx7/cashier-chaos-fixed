@@ -46,7 +46,7 @@ export function CashierChaos() {
 
     setTimeout(() => {
       if (result === "success") {
-        if (customer >= 4) return gs.endSession("success");
+        if (customer === 4) return gs.endSession("success");
 
         gs.updateState({ customer: customer + 1, cash: emptyCash() });
       } else if (result === "error") {
@@ -64,7 +64,6 @@ export function CashierChaos() {
   const customerSrc = useMemo(() => gs.assets[`person${getRandomNum(8, 1)}_${getRandomNum(4, 1)}`], [customer]);
   const { hundreds, cents } = useMemo(() => getAmount(multiple), [customer]);
   const borrow = cents > 0 ? 1 : 0;
-    console.log('hundreds:', hundreds, 'cents:', cents, 'borrow:', borrow);
 
 
   return (
@@ -80,8 +79,13 @@ export function CashierChaos() {
 
       <div
         className="relative flex flex-col items-center justify-center flex-grow overflow-hidden"
+      
+
         style={{
           backgroundImage: `url(${gs.assets.background})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
         }}
       >
         <img src={customerSrc} className="absolute right-[5%] h-1/2 bottom-[10%]" />
@@ -89,12 +93,12 @@ export function CashierChaos() {
         <div className="absolute bottom-0 left-0 w-1/2">
           <img src={gs.assets.cashRegister} className="-mb-1" />
 
-          <div className="absolute top-[12%] left-[12%] text-lg text-white font-large">
+          <div className="absolute top-[12%] left-[12%] text-xl md:text-2xl lg:text-3xl text-white font-bold">
             <p>Received: </p>
             <p>Total: </p>
             <p className={cashRegisterWorking ? "text-yellow-500" : "text-red-400"}>Change: </p>
           </div>
-          <div className="absolute top-[12%] right-[72%] text-right text-lg text-white font-large">
+          <div className="absolute top-[12%] right-[72%] text-right text-xl md:text-2xl lg:text-3xl text-white font-bold">
             <p>$100.00</p>
             <p>
               ${100 - hundreds - borrow}.{borrow * 100 - cents}
