@@ -79,7 +79,7 @@ export function CashierChaos() {
 
       <div
         className="relative flex flex-col items-center justify-center flex-grow overflow-hidden"
-      
+
 
         style={{
           backgroundImage: `url(${gs.assets.background})`,
@@ -124,7 +124,7 @@ export function CashierChaos() {
                   className="absolute"
                   src={gs.assets["dollar_" + x]}
                   style={{ display: cash && cash[x] ? undefined : "none" }}
-                  />
+                />
                 <Highlight num={cash[x]} />
                 <motion.img key={`${x}-${cash[x]}`} layoutId={`${x}-${cash[x]}`} src={gs.assets["dollar_" + x]} />
               </button>
@@ -135,7 +135,7 @@ export function CashierChaos() {
                 <button
                   key={x}
                   className="relative"
-                  onClick={() => gs.updateState({ cash: { ...cash, [x]: cash[x] - 1 } })}
+                  onClick={() => gs.updateState({ cash: { ...cash, [x]: (cash[x] || 0) - 1 } })}
                   style={{ display: cash && cash[x] ? undefined : "none" }}
                 >
                   <img
@@ -162,28 +162,29 @@ export function CashierChaos() {
 
       <div className="py-4 bg-sky-800 md:py-6 lg:py-10">
         <div className="grid grid-cols-4 gap-2 px-4 py-2 mx-auto mb-2 tall:py-4 w-fit">
-          {HUNDREDS.map((x) => (
+        {HUNDREDS.map((x) => (
             <button
               key={x}
-              className="bg-[#303A43] pt-2 px-1 w-20 h-[185px] md:h-56 md:w-24 lg:w-28 lg:h-64 relative"
-              onClick={() => gs.updateState({ cash: { ...cash, [x]: cash[x] + 1 } })}
+              className="bg-[#303A43] pt-1 md:pt-2 px-1 w-16 h-32 sm:w-20 sm:h-[185px] md:h-56 md:w-24 lg:w-28 lg:h-64 relative"
+              onClick={() => gs.updateState({ cash: { ...cash, [x]: (cash[x] || 0) + 1 } })}
             >
-              <img src={gs.assets["dollar_" + x]} className="absolute w-[72px] md:w-[88px] lg:w-[104px]" />
+              <img src={gs.assets["dollar_" + x]} className="absolute w-14 sm:w-[72px] md:w-[88px] lg:w-[104px]" />
               <motion.img key={`${x}-${cash[x] + 1}`} layoutId={`${x}-${cash[x] + 1}`} src={gs.assets["dollar_" + x]} />
             </button>
           ))}
 
+
           {CENTS.map((x) => (
             <button
               key={x}
-              className="bg-[#303A43] size-20 flex justify-center items-center pt-2 relative md:size-24 lg:size-28"
-              onClick={() => gs.updateState({ cash: { ...cash, [x]: cash[x] + 1 } })}
+              className="bg-[#303A43] w-16 h-16 sm:size-20 md:size-24 lg:size-28 flex justify-center items-center pt-1 md:pt-2 relative"
+              onClick={() => gs.updateState({ cash: { ...cash, [x]: (cash[x] || 0) + 1 } })}
             >
-              <img src={gs.assets["cent_" + x * 100]} className="absolute size-16 md:size-20 lg:size-24" />
+              <img src={gs.assets["cent_" + x * 100]} className="absolute w-14 h-14 sm:size-16 md:size-20 lg:size-24" />
               <motion.img
                 key={`${x}-${cash[x] + 1}`}
                 layoutId={`${x}-${cash[x] + 1}`}
-                className="relative size-16 md:size-20 lg:size-24"
+                className="relative w-14 h-14 sm:size-16 md:size-20 lg:size-24"
                 src={gs.assets["cent_" + x * 100]}
               />
             </button>
@@ -193,19 +194,19 @@ export function CashierChaos() {
         <button
           className="block pt-1 pb-2 mx-auto text-xl font-bold text-white bg-green-600 shadow-xl rounded-xl w-80 md:scale-125 lg:scale-150"
           onClick={() => {
-            const a_hundreds = [20, 10, 5, 2, 1].map((x) => (cash[x] || 0) * x).reduce((a, b) => a + b, 0);
+            const a_hundreds = [20, 10, 5, 2].map((x) => (cash[x] || 0) * x).reduce((a, b) => a + b, 0);
             const a_cents = [1, 0.5, 0.2, 0.1].map((x) => Math.round((cash[x] || 0) * x * 100)).reduce((a, b) => a + b, 0);
-            
+
             const totalGiven = a_hundreds + a_cents / 100;
             const expectedChange = hundreds + cents / 100;
-            
+
             if (Math.abs(totalGiven - expectedChange) < 0.01) {
               setResult("success");
             } else {
               setResult("error");
             }
           }}
-          
+
         >
           SUBMIT
         </button>
