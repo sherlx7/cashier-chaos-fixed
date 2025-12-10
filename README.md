@@ -1,50 +1,92 @@
-**This README documents the following:**
-○ What was broken
-○ What I fixed
-○ Any trade-offs or assumptions made
-○ Small UX improvements
+# Cashier Chaos - Bug Fixes & Documentation
 
-**What Was Broken**
-Critical Game-Breaking Bugs:
-1. Uninitialized Game State
-Issue: customer and remainingLives variables were undefined /n
-Impact: Game crashed immediately on start with TypeError: Cannot read properties of undefined
-Fix: define and initialise the values
-2. Non-Functional SUBMIT Button
-Issue: Button calculated change totals but never validated or updated game state
-Impact: Game was completely unplayable - no way to submit answers or progress
-Fix: Implemented SUBMIT Button Logic:
-3. Null Safety Issues
-Issue: Direct access to cash[x] without null checks
-Impact: Runtime errors during state transitions and hot reloads
-Fix: added null safety checks 
+## Overview
+This repository contains the debugged and enhanced version of the **Cashier Chaos** game, a React-based cashier simulation where players must accurately calculate and return change to customers under time pressure.
 
-**UX Improvements:**
-1.  Enhanced progression and game over experience
-Issue: Basic alert() with no replay or proper level progression
-Impact: No way to continue playing or advance to next level
-Fix: Interactive confirm dialogues that gives users the option to continue playing or to stop
-2. Show game instruction only on first game render
-Justification: smoother transition to gameplay rather than having to click "start" at the instruction page everytime
-3. Layout
-Description: single background image in the center of the page
-Future improvements: responsive layout
+---
 
-**Assumptions made:**
-1. Allow the player to continue replay the same level after failing
-Chosen game design:
-If players successfully complete a level, they can choose to advance to next level or restart
-If players fail a level, they have the pption to retry same level
-If players completed all levels, they have the option to restart from Level 1
-Justification: minimise frustration and maintain high engagement with users, supports learning curve for each level,
-matches mordern game design of checkpoint systems 
-2. Session-Based Instruction Display
-Instructions show once per browser session
-Design choice: balance between UX and not overwhelming returning users
+## What This README Documents
+- What was broken
+- What I fixed
+- Trade-offs and assumptions made
+- UX improvements
 
-**Trade-offs:**
-1. Browser confirm() vs Custom Modal
-Chosen: Native confirm() dialog
-Trade-off: Less polished UI but simpler and faster implementation
-Why: Faster to implement, accessible, works everywhere
-Future improvements: Could replace with custom React modal for better UIUX
+---
+
+## What Was Broken
+
+### Critical Game-Breaking Bugs:
+
+#### 1. Uninitialized Game State
+- **Issue:** `customer` and `remainingLives` variables were undefined
+- **Impact:** Game crashed immediately on start with `TypeError: Cannot read properties of undefined`
+- **Fix:** Defined and initialized the values in `Game.tsx`
+
+#### 2. Non-Functional SUBMIT Button
+- **Issue:** Button calculated change totals but never validated or updated game state
+- **Impact:** Game was completely unplayable - no way to submit answers or progress
+- **Fix:** Implemented SUBMIT button validation logic in `CashierChaos.tsx`
+
+#### 3. Null Safety Issues
+- **Issue:** Direct access to `cash[x]` without null checks
+- **Impact:** Runtime errors during state transitions and hot reloads
+- **Fix:** Added null safety checks using optional chaining (`cash?.[x]`)
+
+---
+
+## UX Improvements
+
+### 1. Enhanced Progression and Game Over Experience
+- **Issue:** Basic `alert()` with no replay or proper level progression
+- **Impact:** No way to continue playing or advance to next level
+- **Fix:** Interactive confirm dialogues that give users the option to continue playing or to stop
+
+### 2. Show Game Instructions Only on First Render
+- **Justification:** Smoother transition to gameplay rather than having to click "Start" at the instruction page every time
+
+### 3. Layout Improvements
+- **Description:** Single background image centered on the page
+- **Future Improvements:** Responsive layout for different screen sizes
+
+---
+
+## Assumptions Made
+
+### 1. Allow Players to Retry the Same Level After Failing
+
+**Chosen Game Design:**
+- If players successfully complete a level, they can choose to advance to next level or restart
+- If players fail a level, they have the option to retry same level
+- If players completed all levels, they have the option to restart from Level 1
+
+**Justification:**
+- Minimizes frustration and maintains high engagement with users
+- Supports learning curve for each level
+- Matches modern game design patterns with checkpoint systems
+
+### 2. Session-Based Instruction Display
+- Instructions show once per browser session
+- **Design Choice:** Balance between UX and not overwhelming returning users
+
+---
+
+## Trade-offs
+
+### 1. Browser `confirm()` vs Custom Modal
+- **Chosen:** Native `confirm()` dialog
+- **Trade-off:** Less polished UI but simpler and faster implementation
+- **Why:** Faster to implement, accessible, works everywhere
+- **Future Improvements:** Could replace with custom React modal for better UI/UX
+
+---
+
+## How to Run
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Open browser at http://localhost:3000
+```
